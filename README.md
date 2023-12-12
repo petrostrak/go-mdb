@@ -35,3 +35,14 @@ To execute the migrations:
 ```bash
 migrate -path=./migrations -database=$GOMDB_DSN up
 ```
+
+Migrating to a specific version
+
+As an alternative to looking at the schema_migrations table, if you want to see which migration version your database is currently on you can run the migrate tool’s version command, like so:
+```bash
+migrate -path=./migrations -database=$GOMDB_DSN version
+```
+You can also migrate up or down to a specific version by using the goto command:
+```bash
+migrate -path=./migrations -database=$GOMDB_DSN goto 1
+```
