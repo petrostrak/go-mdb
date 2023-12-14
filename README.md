@@ -31,6 +31,11 @@ To add the constraints:
 migrate create -seq -ext=.sql -dir=./migrations add_movies_check_constraints
 ```
 
+To add the indexes:
+```bash
+migrate create -seq -ext .sql -dir ./migrations add_movies_indexes
+```
+
 To execute the migrations:
 ```bash
 migrate -path=./migrations -database=$GOMDB_DSN up
