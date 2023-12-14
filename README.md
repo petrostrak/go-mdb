@@ -48,9 +48,15 @@ migrate -path=./migrations -database=$GOMDB_DSN goto 1
 ```
 
 ### Filtering, Sorting and Pagination
-The page, page_size and sort query string parameters in action:
-```bash
-curl "localhost:8080/v1/movies?title=godfather&genres=crime,drama&page=1&page_size=5&sort=year"
+A `reductive filter` which allows clients to search based on a case- insensitive exact match for movie title and/or one or more movie genres. For example:
+```go
+// List all movies.
+/v1/movies
+// List movies where the title is a case-insensitive exact match for 'black panther'.
+/v1/movies?title=black+panther
+// List movies where the genres includes 'adventure'.
+/v1/movies?genres=adventure
+// List movies where the title is a case-insensitive exact match for 'moana' AND the // genres include both 'animation' AND 'adventure'. /v1/movies?title=moana&genres=animation,adventure
 ```
 
 * The `page` value is between 1 and 10,000,000.
