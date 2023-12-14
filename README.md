@@ -52,3 +52,8 @@ The page, page_size and sort query string parameters in action:
 ```bash
 curl "localhost:8080/v1/movies?title=godfather&genres=crime,drama&page=1&page_size=5&sort=year"
 ```
+
+* The `page` value is between 1 and 10,000,000.
+* The `page_size` value is between 1 and 100.
+* The `sort` parameter contains a known and supported value for our movies table. Specifically, we’ll allow `"id"`, `"title"`, `"year"`, `"runtime"`, `"-id"`, `"-title"`, `"-year"` or `"-runtime"`.
+<sub><sup>The `-` character to denotes descending sort order.<sub><sup>
