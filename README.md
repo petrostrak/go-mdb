@@ -46,3 +46,9 @@ You can also migrate up or down to a specific version by using the goto command:
 ```bash
 migrate -path=./migrations -database=$GOMDB_DSN goto 1
 ```
+
+### Filtering, Sorting and Pagination
+The page, page_size and sort query string parameters in action:
+```bash
+curl "localhost:8080/v1/movies?title=godfather&genres=crime,drama&page=1&page_size=5&sort=year"
+```
