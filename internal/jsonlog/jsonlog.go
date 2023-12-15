@@ -3,6 +3,7 @@ package jsonlog
 import (
 	"encoding/json"
 	"io"
+	"os"
 	"runtime/debug"
 	"sync"
 	"time"
@@ -88,12 +89,13 @@ func (l *Logger) PrintInfo(message string, properties map[string]string) {
 	l.print(LevelInfo, message, properties)
 }
 
-func (l *Logger) PrintError(message string, properties map[string]string) {
-	l.print(LevelError, message, properties)
+func (l *Logger) PrintError(err error, properties map[string]string) {
+	l.print(LevelError, err.Error(), properties)
 }
 
-func (l *Logger) PrintFatal(message string, properties map[string]string) {
-	l.print(LevelFatal, message, properties)
+func (l *Logger) PrintFatal(err error, properties map[string]string) {
+	l.print(LevelFatal, err.Error(), properties)
+	os.Exit(1)
 }
 
 // Write writes a log entry at the ERROR level with no additional properties.
