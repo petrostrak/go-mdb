@@ -83,3 +83,20 @@ func (l *Logger) print(level Level, message string, properties map[string]string
 
 	return l.out.Write(append(line, '\n'))
 }
+
+func (l *Logger) PrintInfo(message string, properties map[string]string) {
+	l.print(LevelInfo, message, properties)
+}
+
+func (l *Logger) PrintError(message string, properties map[string]string) {
+	l.print(LevelError, message, properties)
+}
+
+func (l *Logger) PrintFatal(message string, properties map[string]string) {
+	l.print(LevelFatal, message, properties)
+}
+
+// Write writes a log entry at the ERROR level with no additional properties.
+func (l *Logger) Write(message []byte) (n int, err error) {
+	return l.print(LevelError, string(message), nil)
+}
