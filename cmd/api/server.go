@@ -1,3 +1,13 @@
+// Gracefully shutdown:
+//
+// Shutdown gracefully shuts down the server without interrupting any active
+// connections. Shutdown works by first closing all open listeners, then closing
+// all idle connections, and then waiting indefinitely for connections to return
+// to idle and then shut down.
+//
+// When we receive a SIGINT or SIGTERM signal, we instruct our server to stop
+// accepting any new HTTP requests, and give any in-flight requests a ‘grace‘
+// period of 5 seconds to complete before the application is terminated.
 package main
 
 import (
@@ -40,6 +50,9 @@ func (app *application) serve() error {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
+		// Call Shutdown() on our server, passing in the context we just made.
+		// Shutdown() will return nil if the graceful shutdown was successful, or an
+		// error.
 		shutdownError <- srv.Shutdown(ctx)
 	}()
 
@@ -48,11 +61,16 @@ func (app *application) serve() error {
 		"env":  app.config.env,
 	})
 
+	// Calling Shutdown() on our server will cause ListenAndServe() to immediately
+	// return a http.ErrServerClosed error. So if we see this error, it is actually a
+	// good thing and an indication that the graceful shutdown has started.
 	err := srv.ListenAndServe()
 	if !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}
 
+	// Otherwise, we wait to receive the return value from Shutdown() on the
+	// shutdownError channel.
 	err = <-shutdownError
 	if err != nil {
 		return err
