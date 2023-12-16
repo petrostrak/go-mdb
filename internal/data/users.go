@@ -179,7 +179,3 @@ func (m *UserModel) Update(user *User) error {
 
 	return nil
 }
-
-func (u *UserModel) Delete(id int64) error {
-	return nil
-}
