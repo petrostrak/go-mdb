@@ -1,6 +1,7 @@
 package data
 
 import (
+	"database/sql"
 	"errors"
 	"time"
 
@@ -80,4 +81,24 @@ func ValidateUser(v *validator.Validator, user *User) {
 	if user.Password.hash == nil {
 		panic("missing password hash for user")
 	}
+}
+
+type UserModel struct {
+	DB *sql.DB
+}
+
+func (u *UserModel) Insert(user *User) error {
+	return nil
+}
+
+func (u *UserModel) Get(id int64) (*User, error) {
+	return nil, nil
+}
+
+func (u *UserModel) Update(user *User) error {
+	return nil
+}
+
+func (u *UserModel) Delete(id int64) error {
+	return nil
 }
