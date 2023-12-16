@@ -36,9 +36,19 @@ To add the indexes:
 migrate create -seq -ext .sql -dir ./migrations add_movies_indexes
 ```
 
+To add users table:
+```bash
+migrate create -seq -ext=.sql -dir=./migrations create_users_table
+```
+
 To execute the migrations:
 ```bash
 migrate -path=./migrations -database=$GOMDB_DSN up
+```
+
+In case of an error `error: Dirty database version x. Fix and force version.`
+```bash
+migrate -path=./migrations -database=$GOMDB_DSN force x
 ```
 
 Migrating to a specific version
