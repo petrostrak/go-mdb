@@ -41,6 +41,11 @@ To add users table:
 migrate create -seq -ext=.sql -dir=./migrations create_users_table
 ```
 
+To add tokens table
+```bash
+migrate create -seq -ext .sql -dir ./migrations create_tokens_table
+```
+
 To execute the migrations:
 ```bash
 migrate -path=./migrations -database=$GOMDB_DSN up
