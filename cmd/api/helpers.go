@@ -141,3 +141,17 @@ func (app *application) readInt(qs url.Values, key string, defaultValue int, v *
 
 	return i
 }
+
+// background accepts an arbitrary function as parameter, spins up a background
+// goroutine, uses a deferred function to recover any panics and logs the error,
+// and executes the function itself by calling fn().
+func (app *application) background(fn func()) {
+	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				app.logger.PrintError(fmt.Errorf("%s", err), nil)
+			}
+		}()
+		fn()
+	}()
+}
