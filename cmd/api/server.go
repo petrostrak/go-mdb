@@ -55,7 +55,7 @@ func (app *application) serve() error {
 			shutdownError <- err
 		}
 
-		app.logger.PrintInfo("completong background task", map[string]string{
+		app.logger.PrintInfo("completing background task", map[string]string{
 			"addr": srv.Addr,
 		})
 
