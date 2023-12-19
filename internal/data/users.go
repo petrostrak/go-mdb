@@ -149,7 +149,7 @@ func (m *UserModel) GetByEmail(email string) (*User, error) {
 
 func (m *UserModel) Update(user *User) error {
 	query := `
-		UPDATE user
+		UPDATE users
 		SET name = $1, email = $2, password_hash = $3, activated = $4, version = version + 1
 		WHERE id = $5 AND version = $6
 		RETURNING version`
@@ -213,7 +213,7 @@ func (m UserModel) GetForToken(tokenScope, tokenPlaintext string) (*User, error)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			return nil, err
+			return nil, ErrRecordNotFound
 		default:
 			return nil, err
 		}
