@@ -46,6 +46,11 @@ To add tokens table
 migrate create -seq -ext .sql -dir ./migrations create_tokens_table
 ```
 
+To add permissions table:
+```bash
+migrate create -seq -ext .sql -dir ./migrations add_permissions
+```
+
 To execute the migrations:
 ```bash
 migrate -path=./migrations -database=$GOMDB_DSN up
