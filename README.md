@@ -94,3 +94,8 @@ To pass an arbitrary list (space separated) of URIs as trusted origins:
 ```bash
 go run ./cmd/api -cors-trusted-origins="http://localhost:9000 http://localhost:9001"
 ```
+
+### Exposed Metrics of the application:
+```
+/debug/vars
+```
