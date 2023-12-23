@@ -88,3 +88,9 @@ A `reductive filter` which allows clients to search based on a case- insensitive
 * The `page_size` value is between 1 and 100.
 * The `sort` parameter contains a known and supported value for our movies table. Specifically, we’ll allow `"id"`, `"title"`, `"year"`, `"runtime"`, `"-id"`, `"-title"`, `"-year"` or `"-runtime"`.
 <sub><sup>The `-` character to denotes descending sort order.<sub><sup>
+
+### CORS
+To pass an arbitrary list (space separated) of URIs as trusted origins:
+```bash
+go run ./cmd/api -cors-trusted-origins="http://localhost:9000 http://localhost:9001"
+```
