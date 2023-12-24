@@ -1,3 +1,5 @@
+include .envrc
+
 .PHONY: help
 help:
 	@echo 'Usage:'
