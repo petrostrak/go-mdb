@@ -18,9 +18,10 @@ import (
 	"github.com/petrostrak/gomdb/internal/mailer"
 )
 
-const version = "1.0.0"
-
-var buildTime string
+var (
+	buildTime string
+	version   string
+)
 
 // A config struct that holds all the configuration settinfs for the application.
 type config struct {
