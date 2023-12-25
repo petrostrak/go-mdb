@@ -7,12 +7,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/petrostrak/gomdb/internal/validator"
 )
 
 type Movie struct {
-	ID        int64     `json:"id"`
+	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"-"`
 	Title     string    `json:"title"`
 	Year      int32     `json:"year,omitempty"`
@@ -60,8 +61,8 @@ func (m MovieModel) Insert(movie *Movie) error {
 	)
 }
 
-func (m MovieModel) Get(id int64) (*Movie, error) {
-	if id < 1 {
+func (m MovieModel) Get(id uuid.UUID) (*Movie, error) {
+	if id == uuid.Nil {
 		return nil, ErrRecordNotFound
 	}
 
@@ -129,8 +130,8 @@ func (m MovieModel) Update(movie *Movie) error {
 	return nil
 }
 
-func (m MovieModel) Delete(id int64) error {
-	if id < 1 {
+func (m MovieModel) Delete(id uuid.UUID) error {
+	if id == uuid.Nil {
 		return ErrRecordNotFound
 	}
 

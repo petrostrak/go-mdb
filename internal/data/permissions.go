@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 )
 
@@ -28,7 +29,7 @@ type PermissionModel struct {
 
 // GetAllForUser returns all permission codes for a specific user in a
 // Permissions slice.
-func (m PermissionModel) GetAllForUser(userID int64) (Permissions, error) {
+func (m PermissionModel) GetAllForUser(userID uuid.UUID) (Permissions, error) {
 	query := `
 		SELECT permissions.code
 		FROM permissions
@@ -65,7 +66,7 @@ func (m PermissionModel) GetAllForUser(userID int64) (Permissions, error) {
 }
 
 // Add the provided permission codes for a specific user.
-func (m PermissionModel) AddForUser(userID int64, codes ...string) error {
+func (m PermissionModel) AddForUser(userID uuid.UUID, codes ...string) error {
 	query := `
 		INSERT INTO users_permissions
 		SELECT $1, permissions.id FROM permissions

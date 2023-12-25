@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/petrostrak/gomdb/internal/data"
 	"github.com/petrostrak/gomdb/internal/validator"
 )
@@ -61,7 +62,7 @@ func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	movie, err := app.models.Movies.Get(id)
+	movie, err := app.models.Movies.Get(uuid.MustParse(id))
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -85,7 +86,7 @@ func (app *application) updateMovieHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	movie, err := app.models.Movies.Get(id)
+	movie, err := app.models.Movies.Get(uuid.MustParse(id))
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -156,7 +157,7 @@ func (app *application) deleteMovieHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	err = app.models.Movies.Delete(id)
+	err = app.models.Movies.Delete(uuid.MustParse(id))
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):

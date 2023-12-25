@@ -8,6 +8,7 @@ import (
 	"encoding/base32"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/petrostrak/gomdb/internal/validator"
 )
 
@@ -20,12 +21,12 @@ const (
 type Token struct {
 	Plaintext string    `json:"token"`
 	Hash      []byte    `json:"-"`
-	UserID    int64     `json:"-"`
+	UserID    uuid.UUID `json:"-"`
 	Expiry    time.Time `json:"expiry"`
 	Scope     string    `json:"-"`
 }
 
-func generateToken(userID int64, ttl time.Duration, scope string) (*Token, error) {
+func generateToken(userID uuid.UUID, ttl time.Duration, scope string) (*Token, error) {
 	token := &Token{
 		UserID: userID,
 		Expiry: time.Now().Add(ttl),
@@ -69,7 +70,7 @@ type TokenModel struct {
 
 // The New method is a shortcut which creates a new Token struct and then inserts the
 // data in the tokens table.
-func (m *TokenModel) New(userID int64, ttl time.Duration, scope string) (*Token, error) {
+func (m *TokenModel) New(userID uuid.UUID, ttl time.Duration, scope string) (*Token, error) {
 	token, err := generateToken(userID, ttl, scope)
 	if err != nil {
 		return nil, err
@@ -95,7 +96,7 @@ func (m *TokenModel) Insert(token *Token) error {
 }
 
 // // DeleteAllForUser deletes all tokens for a specific user and scope.
-func (m TokenModel) DeleteAllForUser(scope string, userID int64) error {
+func (m TokenModel) DeleteAllForUser(scope string, userID uuid.UUID) error {
 	query := `
 		DELETE FROM tokens
 		WHERE scope = $1 AND user_id = $2`

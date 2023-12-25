@@ -7,6 +7,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/petrostrak/gomdb/internal/validator"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -15,7 +16,7 @@ var ErrDuplicateEmail = errors.New("duplicate email")
 
 // User struct represents an individual user.
 type User struct {
-	ID        int64     `json:"id"`
+	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created"`
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
