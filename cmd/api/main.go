@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"expvar"
 	"flag"
+	"fmt"
 	"os"
 	"runtime"
 	"strings"
@@ -18,6 +19,8 @@ import (
 )
 
 const version = "1.0.0"
+
+var buildTime string
 
 // A config struct that holds all the configuration settinfs for the application.
 type config struct {
@@ -78,12 +81,20 @@ func main() {
 	flag.StringVar(&cfg.smtp.password, "smtp-password", "64d1e075467206", "SMTP password")
 	flag.StringVar(&cfg.smtp.sender, "smtp-sender", "Go-MDB <no-reply@gomdb.petros_trak.net>", "SMTP sender")
 
+	displayVersion := flag.Bool("version", false, "Display version and exit")
+
 	flag.Func("cors-trusted-origins", "Trusted CORS origins (space separated)", func(s string) error {
 		cfg.cors.trustedOrigins = strings.Fields(s)
 		return nil
 	})
 
 	flag.Parse()
+
+	if *displayVersion {
+		fmt.Printf("Version:\t%s\n", version)
+		fmt.Printf("Build time:\t%s\n", buildTime)
+		os.Exit(0)
+	}
 
 	logger := jsonlog.New(os.Stdout, jsonlog.LevelInfo)
 
