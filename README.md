@@ -99,3 +99,127 @@ go run ./cmd/api -cors-trusted-origins="http://localhost:9000 http://localhost:9
 ```
 /debug/vars
 ```
+
+## APPLICATION WORKFLOW
+### Create a new user
+```bash
+BODY='{"name": "Petros Trak", "email": "petros@example.com", "password": "pa55word"}'
+curl -d "$BODY" localhost:4000/v1/users
+```
+Output:
+```json
+{
+	"user": {
+		"id": "d1db737a-9cc4-4d19-9507-e286e8d5b3c5",
+		"created": "2023-12-25T18:07:47Z",
+		"name": "Petros Trak",
+		"email": "petros@example.com",
+		"activated": false
+	}
+}
+```
+### Activate the user
+Check your email for the activation token and:
+```bash
+curl -X PUT -d '{"token": "M7HSLDZHMJCEEHJG3CYBC353EM"}' localhost:4000/v1/users/activated
+```
+Output:
+```json
+{
+	"user": {
+		"id": "d1db737a-9cc4-4d19-9507-e286e8d5b3c5",
+		"created": "2023-12-25T18:07:47Z",
+		"name": "Petros Trak",
+		"email": "petros@example.com",
+		"activated": true
+	}
+}
+```
+### Authenticate the user
+```bash
+curl -d '{"email": "petros@example.com", "password": "pa55word"}' localhost:4000/v1/tokens/authentication
+```
+Output:
+```json
+{
+	"authentication_token": {
+		"token": "ZW6EIDNJ6N4BUBAUDXXCBERA5U",
+		"expiry": "2023-12-26T20:20:02.224991+02:00"
+	}
+}
+```
+### Give permissions to the users
+Users can read and /or write movies in the database. By default, all users can read. 
+
+The required permissions will align with our API endpoints like so:
+| Method | URL Pattern    | Required Permission |
+|--------|----------------|---------------------|
+| GET    | /v1/movies     | movies:read         |
+| POST   | /v1/movies     | movies:write        |
+| GET    | /v1/movies/:id | movies:read         |
+| PATCH  | /v1/movies/:id | movies:write        |
+| DELETE | /v1/movies/:id | movies:write        |
+
+To give write permission to a user:
+```sql
+INSERT INTO users_permissions 
+VALUES (
+    (SELECT id FROM users WHERE email = 'petros@example.com'),
+    (SELECT id FROM permissions WHERE code = 'movies:write') 
+);
+```
+### Create a new movie
+```bash
+BODY='{"title":"Moana","year":2016,"runtime":"107 mins", "genres":["animation","adventure"]}'
+curl -i -d "$BODY" -H "Authorization: Bearer ZW6EIDNJ6N4BUBAUDXXCBERA5U" localhost:4000/v1/movies
+```
+Output:
+```json
+{
+	"movie": {
+		"id": "967188d7-5a12-498c-b266-340eb5e3ccfc",
+		"title": "Moana",
+		"year": 2016,
+		"runtime": "107 mins",
+		"genres": [
+			"animation",
+			"adventure"
+		],
+		"version": 1
+	}
+}
+```
+### Get a movie
+```bash
+curl -i -H "Authorization: Bearer ZW6EIDNJ6N4BUBAUDXXCBERA5U" localhost:4000/v1/movies/967188d7-5a12-498c-b266-340eb5e3ccfc
+```
+### Update / Patch a movie
+```bash
+BODY='{"year": 2017}'
+curl -X PATCH -d "$BODY" -H "Authorization: Bearer ZW6EIDNJ6N4BUBAUDXXCBERA5U" localhost:4000/v1/movies/967188d7-5a12-498c-b266-340eb5e3ccfc
+```
+```json
+{
+	"movie": {
+		"id": "967188d7-5a12-498c-b266-340eb5e3ccfc",
+		"title": "Moana",
+		"year": 2017,
+		"runtime": "107 mins",
+		"genres": [
+			"animation",
+			"adventure"
+		],
+		"version": 2
+	}
+}
+```
+### Delete a movie
+```bash
+curl -X DELETE -H "Authorization: Bearer ZW6EIDNJ6N4BUBAUDXXCBERA5U" localhost:4000/v1/movies/967188d7-5a12-498c-b266-340eb5e3ccfc
+```
+Output:
+```json
+{
+	"message": "successfully deleted"
+}
+```
