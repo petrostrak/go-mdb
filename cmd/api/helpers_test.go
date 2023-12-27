@@ -11,10 +11,12 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
+	"github.com/petrostrak/gomdb/internal/validator"
 )
 
+var app application
+
 func Test_readIDParams(t *testing.T) {
-	var app application
 
 	tests := []struct {
 		ID      string
@@ -46,7 +48,6 @@ func Test_readIDParams(t *testing.T) {
 }
 
 func Test_writeJSON(t *testing.T) {
-	var app application
 	rr := httptest.NewRecorder()
 	payload := make(map[string]any)
 	payload["foo"] = false
@@ -60,8 +61,6 @@ func Test_writeJSON(t *testing.T) {
 }
 
 func Test_readJSON(t *testing.T) {
-	var app application
-
 	sampleJSON := map[string]any{
 		"foo": "bar",
 	}
@@ -104,8 +103,6 @@ func Test_readJSON(t *testing.T) {
 }
 
 func Test_readCSV(t *testing.T) {
-	var app application
-
 	tests := []struct {
 		qs           url.Values
 		key          string
@@ -129,8 +126,6 @@ func Test_readCSV(t *testing.T) {
 }
 
 func Test_readString(t *testing.T) {
-	var app application
-
 	tests := []struct {
 		qs           url.Values
 		key          string
@@ -147,6 +142,28 @@ func Test_readString(t *testing.T) {
 
 		if s != tt.expected {
 			t.Errorf("expected %s but got %s\n", tt.expected, s)
+		}
+	}
+}
+
+func Test_readInt(t *testing.T) {
+	tests := []struct {
+		qs           url.Values
+		key          string
+		defaultValue int
+		expected     int
+	}{
+		{url.Values{"page": []string{"4"}}, "page", 1, 4},
+		{url.Values{"page_sige": []string{"abc"}}, "page_size", 20, 20},
+	}
+
+	var v validator.Validator
+
+	for _, tt := range tests {
+		i := app.readInt(tt.qs, tt.key, tt.defaultValue, &v)
+
+		if i != tt.expected {
+			t.Errorf("expected %d but got %d\n", tt.expected, i)
 		}
 	}
 }
