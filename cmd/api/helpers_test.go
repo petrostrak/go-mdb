@@ -41,3 +41,17 @@ func Test_readIDParams(t *testing.T) {
 		}
 	}
 }
+
+func Test_writeJSON(t *testing.T) {
+	var app application
+	rr := httptest.NewRecorder()
+	payload := make(map[string]any)
+	payload["foo"] = false
+
+	headers := make(http.Header)
+	headers.Add("FOO", "BAR")
+	err := app.writeJSON(rr, http.StatusOK, payload, headers)
+	if err != nil {
+		t.Errorf("failed to write JSON: %v\n", err)
+	}
+}
