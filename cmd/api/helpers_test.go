@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 
 	"github.com/google/uuid"
@@ -99,5 +100,30 @@ func Test_readJSON(t *testing.T) {
 	err = app.readJSON(rr, req, &decodedJSON)
 	if err == nil {
 		t.Error("did not get an error with bad json")
+	}
+}
+
+func Test_readString(t *testing.T) {
+	var app application
+
+	tests := []struct {
+		qs           url.Values
+		key          string
+		defaultValue []string
+		expected     []string
+	}{
+		{url.Values{"genres": []string{"crime", "comedy"}}, "genres", []string{}, []string{"crime", "comedy"}},
+		{url.Values{"genres": []string{"crime", "comedy", "adventure"}}, "genres", []string{}, []string{"crime", "comedy", "adventure"}},
+		{url.Values{"": []string{}}, "genres", []string{}, []string{}},
+	}
+
+	for _, tt := range tests {
+		csv := app.readCSV(tt.qs, tt.key, tt.defaultValue)
+
+		for i, s := range csv {
+			if s != tt.expected[i] {
+				t.Errorf("expected %s but got %s\n", tt.expected[i], s)
+			}
+		}
 	}
 }
