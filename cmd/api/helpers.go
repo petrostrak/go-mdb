@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
 	"github.com/petrostrak/gomdb/internal/validator"
 )
@@ -19,10 +20,10 @@ type envelope map[string]any
 
 // Retrieve the "id" URL parameter from the current request context, then convert it to
 // an integer and return it. If the operation isn't successful, return 0 and an error.
-func (app *application) readIDParams(r *http.Request) (string, error) {
+func (app *application) readIDParams(r *http.Request) (uuid.UUID, error) {
 	params := httprouter.ParamsFromContext(r.Context())
 
-	return params.ByName("id"), nil
+	return uuid.MustParse(params.ByName("id")), nil
 }
 
 // Define a writeJSON() helper for sending responses. This takes the destination
