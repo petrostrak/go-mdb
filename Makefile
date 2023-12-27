@@ -79,3 +79,8 @@ vendor:
 	go mod verify
 	@echo 'Vendoring dependencies'
 	go mod vendor
+
+## coverage: test all code and display coverage
+.PHONY: coverage
+coverage:
+	go test ./... -coverprofile=coverage.out && go tool cover -html=coverage.out
