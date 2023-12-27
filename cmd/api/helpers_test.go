@@ -28,7 +28,7 @@ func Test_readIDParams(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/", nil)
 		ctx := req.Context()
 		ctx = context.WithValue(ctx, httprouter.ParamsKey, httprouter.Params{
-			{"id", tt.ID},
+			{Key: "id", Value: tt.ID},
 		})
 		req = req.WithContext(ctx)
 
