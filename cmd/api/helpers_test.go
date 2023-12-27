@@ -103,7 +103,7 @@ func Test_readJSON(t *testing.T) {
 	}
 }
 
-func Test_readString(t *testing.T) {
+func Test_readCSV(t *testing.T) {
 	var app application
 
 	tests := []struct {
@@ -124,6 +124,29 @@ func Test_readString(t *testing.T) {
 			if s != tt.expected[i] {
 				t.Errorf("expected %s but got %s\n", tt.expected[i], s)
 			}
+		}
+	}
+}
+
+func Test_readString(t *testing.T) {
+	var app application
+
+	tests := []struct {
+		qs           url.Values
+		key          string
+		defaultValue string
+		expected     string
+	}{
+		{url.Values{"genres": []string{"comedy"}}, "genres", "", "comedy"},
+		{url.Values{"genres": []string{"crime", "comedy", "adventure"}}, "genres", "", "crime"},
+		{url.Values{"": []string{}}, "genres", "", ""},
+	}
+
+	for _, tt := range tests {
+		s := app.readString(tt.qs, tt.key, tt.defaultValue)
+
+		if s != tt.expected {
+			t.Errorf("expected %s but got %s\n", tt.expected, s)
 		}
 	}
 }
