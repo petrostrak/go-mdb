@@ -7,6 +7,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
@@ -114,6 +115,8 @@ func TestPingDB(t *testing.T) {
 	}
 }
 
+var movieID uuid.UUID
+
 func TestPostgresDBRepoInsertMovie(t *testing.T) {
 	testMovie := &Movie{
 		Title:   "The Lord of the Rings: The Fellowship of the Ring",
@@ -125,5 +128,22 @@ func TestPostgresDBRepoInsertMovie(t *testing.T) {
 	err := testRepo.Insert(testMovie)
 	if err != nil {
 		t.Errorf("insert movie returned error: %s", err)
+	}
+
+	movieID = testMovie.ID
+}
+
+func TestPostgresDBRepoGetMovie(t *testing.T) {
+	movie, err := testRepo.Get(movieID)
+	if err != nil {
+		t.Errorf("cannot get movie: %s", err)
+	}
+
+	if movie.Title != "The Lord of the Rings: The Fellowship of the Ring" {
+		t.Errorf("expected 'The Lord of the Rings: The Fellowship of the Ring' but got %s", movie.Title)
+	}
+
+	if len(movie.Genres) != 4 {
+		t.Errorf("expected 4 genres got but %d", len(movie.Genres))
 	}
 }
