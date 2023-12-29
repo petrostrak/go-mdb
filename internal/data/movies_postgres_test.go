@@ -103,3 +103,10 @@ func createTables() error {
 
 	return nil
 }
+
+func Test_pingDB(t *testing.T) {
+	err := testDB.Ping()
+	if err != nil {
+		t.Error("can't ping database")
+	}
+}
