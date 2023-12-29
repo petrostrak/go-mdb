@@ -147,3 +147,35 @@ func TestPostgresDBRepoGetMovie(t *testing.T) {
 		t.Errorf("expected 4 genres got but %d", len(movie.Genres))
 	}
 }
+
+func TestPostgresDBRepoUpdateMovie(t *testing.T) {
+	movie := &Movie{
+		ID:      movieID,
+		Title:   "The Lord of the Rings: The Two Towers",
+		Genres:  []string{"Action", "Adventure", "Drama", "Fantasy", "Mystery"},
+		Year:    2002,
+		Version: 1,
+	}
+
+	err := testRepo.Update(movie)
+	if err != nil {
+		t.Errorf("cannot update movie: %s", err)
+	}
+
+	updatedMovie, err := testRepo.Get(movieID)
+	if err != nil {
+		t.Errorf("cannot get movie: %s", err)
+	}
+
+	if movie.Title != updatedMovie.Title {
+		t.Errorf("expected %s but got %s", movie.Title, updatedMovie.Title)
+	}
+
+	if updatedMovie.Version != 2 {
+		t.Errorf("expected version %d", updatedMovie.Version)
+	}
+
+	if len(movie.Genres) != 5 {
+		t.Errorf("expected 5 genres got but %d", len(movie.Genres))
+	}
+}
