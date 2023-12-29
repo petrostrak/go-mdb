@@ -179,3 +179,15 @@ func TestPostgresDBRepoUpdateMovie(t *testing.T) {
 		t.Errorf("expected 5 genres got but %d", len(movie.Genres))
 	}
 }
+
+func TestPostgresDBRepoDeleteMovie(t *testing.T) {
+	err := testRepo.Delete(movieID)
+	if err != nil {
+		t.Errorf("cannot delete movie: %s", err)
+	}
+
+	_, err = testRepo.Get(movieID)
+	if err == nil {
+		t.Error("got movie that was supposed to be deleted")
+	}
+}
