@@ -180,6 +180,23 @@ func TestPostgresDBRepoUpdateMovie(t *testing.T) {
 	}
 }
 
+func TestPostgresDBRepoGetAll(t *testing.T) {
+	filters := Filters{
+		Page:         1,
+		PageSize:     20,
+		Sort:         "id",
+		SortSafelist: []string{"id", "title", "year", "runtime", "-id", "-title", "-year", "-runtime"},
+	}
+	movies, _, err := testRepo.GetAll("Lord Of The Rings", []string{"Action"}, filters)
+	if err != nil {
+		t.Error("cannot get all movies")
+	}
+
+	if len(movies) != 1 {
+		t.Errorf("expected 1 movie but got %d", len(movies))
+	}
+}
+
 func TestPostgresDBRepoDeleteMovie(t *testing.T) {
 	err := testRepo.Delete(movieID)
 	if err != nil {
