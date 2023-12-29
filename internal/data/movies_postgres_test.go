@@ -24,6 +24,7 @@ var (
 var resource *dockertest.Resource
 var pool *dockertest.Pool
 var testDB *sql.DB
+var testRepo MovieModel
 
 func TestMain(m *testing.M) {
 	// connect to docker; fail if docker not running
@@ -77,6 +78,8 @@ func TestMain(m *testing.M) {
 		log.Fatalf("error creating tables: %s", err)
 	}
 
+	testRepo = MovieModel{DB: testDB}
+
 	// run tests
 	code := m.Run()
 
@@ -104,9 +107,23 @@ func createTables() error {
 	return nil
 }
 
-func Test_pingDB(t *testing.T) {
+func TestPingDB(t *testing.T) {
 	err := testDB.Ping()
 	if err != nil {
 		t.Error("can't ping database")
+	}
+}
+
+func TestPostgresDBRepoInsertMovie(t *testing.T) {
+	testMovie := &Movie{
+		Title:   "The Lord of the Rings: The Fellowship of the Ring",
+		Year:    2001,
+		Runtime: 178,
+		Genres:  []string{"Action", "Adventure", "Drama", "Fantasy"},
+	}
+
+	err := testRepo.Insert(testMovie)
+	if err != nil {
+		t.Errorf("insert movie returned error: %s", err)
 	}
 }
