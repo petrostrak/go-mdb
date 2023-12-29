@@ -25,7 +25,13 @@ var (
 var resource *dockertest.Resource
 var pool *dockertest.Pool
 var testDB *sql.DB
-var testRepo MovieModel
+
+type testRepo struct {
+	MovieModel
+	UserModel
+}
+
+var testRepository testRepo
 
 func TestMain(m *testing.M) {
 	// connect to docker; fail if docker not running
@@ -79,7 +85,8 @@ func TestMain(m *testing.M) {
 		log.Fatalf("error creating tables: %s", err)
 	}
 
-	testRepo = MovieModel{DB: testDB}
+	testRepository.MovieModel = MovieModel{DB: testDB}
+	testRepository.UserModel = UserModel{DB: testDB}
 
 	// run tests
 	code := m.Run()
@@ -125,7 +132,7 @@ func TestPostgresDBRepoInsertMovie(t *testing.T) {
 		Genres:  []string{"Action", "Adventure", "Drama", "Fantasy"},
 	}
 
-	err := testRepo.Insert(testMovie)
+	err := testRepository.MovieModel.Insert(testMovie)
 	if err != nil {
 		t.Errorf("insert movie returned error: %s", err)
 	}
@@ -134,7 +141,7 @@ func TestPostgresDBRepoInsertMovie(t *testing.T) {
 }
 
 func TestPostgresDBRepoGetMovie(t *testing.T) {
-	movie, err := testRepo.Get(movieID)
+	movie, err := testRepository.MovieModel.Get(movieID)
 	if err != nil {
 		t.Errorf("cannot get movie: %s", err)
 	}
@@ -157,12 +164,12 @@ func TestPostgresDBRepoUpdateMovie(t *testing.T) {
 		Version: 1,
 	}
 
-	err := testRepo.Update(movie)
+	err := testRepository.MovieModel.Update(movie)
 	if err != nil {
 		t.Errorf("cannot update movie: %s", err)
 	}
 
-	updatedMovie, err := testRepo.Get(movieID)
+	updatedMovie, err := testRepository.MovieModel.Get(movieID)
 	if err != nil {
 		t.Errorf("cannot get movie: %s", err)
 	}
@@ -187,7 +194,7 @@ func TestPostgresDBRepoGetAll(t *testing.T) {
 		Sort:         "id",
 		SortSafelist: []string{"id", "title", "year", "runtime", "-id", "-title", "-year", "-runtime"},
 	}
-	movies, _, err := testRepo.GetAll("Lord Of The Rings", []string{"Action"}, filters)
+	movies, _, err := testRepository.MovieModel.GetAll("Lord Of The Rings", []string{"Action"}, filters)
 	if err != nil {
 		t.Error("cannot get all movies")
 	}
@@ -198,13 +205,31 @@ func TestPostgresDBRepoGetAll(t *testing.T) {
 }
 
 func TestPostgresDBRepoDeleteMovie(t *testing.T) {
-	err := testRepo.Delete(movieID)
+	err := testRepository.MovieModel.Delete(movieID)
 	if err != nil {
 		t.Errorf("cannot delete movie: %s", err)
 	}
 
-	_, err = testRepo.Get(movieID)
+	_, err = testRepository.MovieModel.Get(movieID)
 	if err == nil {
 		t.Error("got movie that was supposed to be deleted")
 	}
+}
+
+var userID uuid.UUID
+
+func TestPostgresDBRepoInsertUser(t *testing.T) {
+	user := &User{
+		Name:      "Petros",
+		Email:     "petros@example.com",
+		Password:  password{hash: []byte("password")},
+		Activated: false,
+	}
+
+	err := testRepository.UserModel.Insert(user)
+	if err != nil {
+		t.Errorf("could not insert user: %s", err)
+	}
+
+	userID = user.ID
 }

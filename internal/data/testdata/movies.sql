@@ -11,3 +11,15 @@ CREATE TABLE IF NOT EXISTS movies (
 ALTER TABLE movies ADD CONSTRAINT movies_runtime_check CHECK (runtime >= 0);
 ALTER TABLE movies ADD CONSTRAINT movies_year_check CHECK (year BETWEEN 1888 AND date_part('year', now())); 
 ALTER TABLE movies ADD CONSTRAINT genres_length_check CHECK (array_length(genres, 1) BETWEEN 1 AND 5);
+
+CREATE EXTENSION citext;
+
+CREATE TABLE IF NOT EXISTS users (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(), 
+    name text NOT NULL,
+    email citext UNIQUE NOT NULL,
+    password_hash bytea NOT NULL,
+    activated bool NOT NULL,
+    version integer NOT NULL DEFAULT 1
+);
