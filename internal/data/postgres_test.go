@@ -233,3 +233,14 @@ func TestPostgresDBRepoInsertUser(t *testing.T) {
 
 	userID = user.ID
 }
+
+func TestPostgresDBRepoGetByEmail(t *testing.T) {
+	user, err := testRepository.UserModel.GetByEmail("petros@example.com")
+	if err != nil {
+		t.Error("could not get user by email")
+	}
+
+	if user.Name != "Petros" {
+		t.Errorf("expected 'petros' but got '%s'", user.Name)
+	}
+}
