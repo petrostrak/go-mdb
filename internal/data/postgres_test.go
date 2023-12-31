@@ -244,3 +244,25 @@ func TestPostgresDBRepoGetByEmail(t *testing.T) {
 		t.Errorf("expected 'petros' but got '%s'", user.Name)
 	}
 }
+
+func TestPorstgresDBRepoUpdateUser(t *testing.T) {
+	user := &User{
+		ID:      userID,
+		Name:    "Petran",
+		Email:   "petros@example.com",
+		Version: 1,
+	}
+
+	err := testRepository.UserModel.Update(user)
+	if err != nil {
+		t.Errorf("could not update user: %s", err)
+	}
+
+	if user.Version != 2 {
+		t.Errorf("expected version to be 2, got %d", user.Version)
+	}
+
+	if user.Name != "Petran" {
+		t.Errorf("expected 'petran' but got '%s'", user.Name)
+	}
+}
