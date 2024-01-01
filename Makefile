@@ -80,7 +80,12 @@ vendor:
 	@echo 'Vendoring dependencies'
 	go mod vendor
 
-## coverage: test all code and display coverage
+## coverage: test all code except integration and display coverage
 .PHONY: coverage
 coverage:
 	go test ./... -coverprofile=coverage.out && go tool cover -html=coverage.out
+
+## coverage: test all code plus integration and display coverage
+.PHONY: coverage/integration
+coverage/integration:
+	go test ./... -tags=integration -coverprofile=coverage.out && go tool cover -html=coverage.out
