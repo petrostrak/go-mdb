@@ -1,17 +1,38 @@
 version: "3.3"
 services:
-  postgres:
+
+  app:
+    container_name: gomdb_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 4000:4000
+    networks:
+      - backend
+
+  db:
+    container_name: gomdb_db
     image: postgres:14-alpine
-    container_name: gomdb_docker
+    restart: always
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=gomdb
-    restart: always
-    ports:
-      - 0.0.0.0:5432:5432
     volumes:
           # copy the sql script to drop tables
           - ./db/migration/000001_init_schema.down.sql:/docker-entrypoint-initdb.d/migrationdown.sql
           # copy the sql script to create tables
           - ./db/migration/000001_init_schema.up.sql:/docker-entrypoint-initdb.d/migrationup.sql
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+
+networks:
+  backend:
+    name: backend-network
+    driver: bridge
