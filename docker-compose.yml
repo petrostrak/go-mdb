@@ -40,7 +40,7 @@ services:
     networks:
       - backend
     volumes:
-      - .:/migrations
+      - ./migrations:/migrations
     command: ["-path", "migrations", "-database",  "postgres://postgres:password@db/gomdb?sslmode=disable", "up"]
     links:
       - db
