@@ -12,7 +12,7 @@ help:
 
 .PHONY: confirm
 confirm:
-	@echo -n 'Are you sure? [y/N] ' && read ans && [ $${ans:-N} = y ]
+	@echo 'Are you sure? [y/N] ' && read -r ans && [ $${ans:-N} = y ]
 
 # ================================================================= #
 # DEVELOPMENT
