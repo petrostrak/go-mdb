@@ -50,9 +50,6 @@ jobs:
         which migrate
 
     - name: Run migrations
-      run: make db/migrations/up
-      
-    - name: Confirm
-      run: echo y
+      run: yes | make db/migrations/up
       
     
