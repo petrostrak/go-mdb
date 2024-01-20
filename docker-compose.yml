@@ -18,6 +18,8 @@ services:
     container_name: gomdb_db
     image: postgres:14-alpine
     restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
@@ -32,20 +34,24 @@ services:
       timeout: 3s
       retries: 5
   
-  # migrate:
-  #   container_name: gomdb_migrations
-  #   image: migrate/migrate
-  #   networks:
-  #     - backend
-  #   volumes:
-  #     - .:/migrations
-  #   command: ["-path", "/migrations", "-database",  "postgres://postgres:password@db:5432/gomdb?sslmode=disable", "up"]
-  #   links:
-  #     - db
-  #   depends_on:
-  #     - db
+  migrate:
+    container_name: gomdb_migrations
+    image: migrate/migrate
+    networks:
+      - backend
+    volumes:
+      - .:/migrations
+    command: ["-path", "migrations", "-database",  "postgres://postgres:password@db/gomdb?sslmode=disable", "up"]
+    links:
+      - db
+    depends_on:
+      db:
+        condition: service_healthy
 
 networks:
   backend:
     name: backend-network
     driver: bridge
+
+volumes:
+  postgres_data:
