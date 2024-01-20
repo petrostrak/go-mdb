@@ -22,15 +22,28 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=gomdb
-    volumes:
-          # copy the sql script to drop tables
-          - ./db/migration/000001_init_schema.down.sql:/docker-entrypoint-initdb.d/migrationdown.sql
-          # copy the sql script to create tables
-          - ./db/migration/000001_init_schema.up.sql:/docker-entrypoint-initdb.d/migrationup.sql
     ports:
       - 5432:5432
     networks:
       - backend
+    healthcheck:
+      test: pg_isready -U postgres -d gomdb
+      interval: 10s
+      timeout: 3s
+      retries: 5
+  
+  # migrate:
+  #   container_name: gomdb_migrations
+  #   image: migrate/migrate
+  #   networks:
+  #     - backend
+  #   volumes:
+  #     - .:/migrations
+  #   command: ["-path", "/migrations", "-database",  "postgres://postgres:password@db:5432/gomdb?sslmode=disable", "up"]
+  #   links:
+  #     - db
+  #   depends_on:
+  #     - db
 
 networks:
   backend:
